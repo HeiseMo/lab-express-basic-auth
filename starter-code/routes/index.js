@@ -15,6 +15,7 @@ const checkLogin = () =>{
   return (req, res, next) => {
     if(req.session.user) {
       console.log('User is logged in')
+      next();
     } else {
       res.redirect('login');
     }
@@ -72,17 +73,23 @@ router.post('/login', (req, res, next) => {
     }
     if(bcrypt.compareSync(password, found.password)) {
         req.session.user = found;
-        res.redirect('/profile');
+        res.redirect('main');
         } else {
           res.render('login', { message: 'Wrong credentials!' });
         }
   });
 });
 
-//Profile Stuff
+//Private Stuff
 
-router.get('/profile', checkLogin(), (req, res, next) => {
-  res.render('profile');
+router.get('/private', checkLogin(), (req, res, next) => {
+  console.log('this is the cookie: ', req.cookies);
+  console.log('this is the user id: ', req.session.user._id);
+  res.render('private');
+});
+
+router.get('/main', checkLogin(), (req, res, next) => {
+  res.render('main');
 });
 
 module.exports = router;
